@@ -1,4 +1,4 @@
-# Image + Audio = Video 🖼️+🎶=🎬
+# Image + Audio = Video (🖼️+🎶=🎬)
 
 This project provides a Python script packaged in a Docker container to create a video file from a single image and an audio file. The image will be displayed for the duration of the audio.
 
@@ -17,6 +17,7 @@ This project provides a Python script packaged in a Docker container to create a
 
 ## Project Structure 📂
 
+```
 image_plus_audio/
 ├── src/
 │   ├── create_video.py      # Python script for video creation
@@ -28,6 +29,7 @@ image_plus_audio/
 └── sample_files/            # Directory for your sample input files (you'll need to create this or use your own paths)
 ├── image.png            # (Example: place your image here)
 └── audio.mp3            # (Example: place your audio here - .mp3, .wav, .m4a, or .mp4 with audio track)
+```
 
 ## Setup 🚀
 
@@ -100,21 +102,9 @@ The core logic resides in `src/create_video.py` and uses the `moviepy` library.
 
 ## Dockerization Details 🐳
 
-* **Base Image**: `python:3.9-slim` (a lightweight official Python image).
+* **Base Image**: `python:3.12-slim` (a lightweight official Python image).
 * **Key Dependencies**: `ffmpeg` (system-level utility for video/audio processing), `moviepy` (Python library).
 * **Entrypoint**: The container is configured to directly run the `create_video.py` script, passing along arguments provided to `docker run`.
 * **Volume Mounts**: The `create-video.sh` script intelligently mounts the parent directories of your input files (read-only) and the target output directory (read-write) into the container. This allows the script inside Docker to access your files seamlessly.
-
-## Troubleshooting ⚠️
-
-* **`docker` command not found / permission denied**: Ensure Docker is installed, the Docker daemon is running, and your user has permissions to interact with it. On Linux, you might need to add your user to the `docker` group (e.g., `sudo usermod -aG docker $USER` and then log out/in) or run Docker commands with `sudo` (less recommended for general use).
-* **Script execution permission denied**: Make sure the shell scripts (`.sh`) are executable (`chmod +x script_name.sh`). The `generate_project.sh` should handle this for the main scripts.
-* **"File not found" errors from `create-video.sh`**: Double-check the paths you provide as arguments. Relative paths are resolved from the directory where you run the script. Use absolute paths if unsure.
-* **Video creation fails (MoviePy/ffmpeg errors in container logs)**:
-    * The Docker build should install `ffmpeg`. If it failed, rebuild the image.
-    * Check the console output when running `create-video.sh` for specific error messages from `moviepy` or `ffmpeg`.
-    * The input audio/image file might be corrupted or in a very unusual format not fully supported by `ffmpeg` (though it's quite versatile).
-    * Ensure the audio file actually contains an audio track with a positive duration. The Python script attempts to check for zero-duration audio.
-* **Output video file not created or owned by root**: The `create-video.sh` script uses `--user "$(id -u):$(id -g)"` to mitigate permission issues for the output file on Linux/macOS. If you still face issues, check directory permissions on your host system for the output location.
 
 Enjoy creating your videos! 😄
