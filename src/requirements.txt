@@ -1,0 +1,2 @@
+# MoviePy with specific version that works well
+moviepy>=1.0.3
